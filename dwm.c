@@ -574,15 +574,17 @@ buttonpress(XEvent *e)
 			char ch;
 			dwmblockssig = 0;
 			while (text[++i]) {
-				if ((unsigned char)text[i] < ' ') {
+				if ((unsigned char)text[i] < ' ' && (unsigned char)text[i] > NUMCOLORS) {
 					ch = text[i];
 					text[i] = '\0';
-					x += TEXTW(text) - lrpad;
+					strcpy(stextprintable, text);
+					reduce(stextprintable);
+					x += TEXTW(stextprintable) - lrpad;
 					text[i] = ch;
 					text += i+1;
 					i = -1;
 					if (x >= ev->x) break;
-					dwmblockssig = ch;
+					dwmblockssig = ch - NUMCOLORS;
 				}
 			}
 		} else
