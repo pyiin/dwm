@@ -71,7 +71,8 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeTitle, SchemeLt, SchemeStatus, SchemeIndOff, SchemeIndOn, SchemeSel2, SchemeUrgent, SchemeNotify }; /* color schemes */
+//enum { SchemeNorm, SchemeSel }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -288,10 +289,14 @@ static Client *swallowingclient(Window w);
 static Client *termforwin(const Client *c);
 static pid_t winpid(Window w);
 
+/* my functions */
+int reduce(char* text);
+
 
 /* variables */
 static const char broken[] = "broken";
 static char stext[256];
+static char stextprintable[256];
 static char rawstext[256];
 static int dwmblockssig;
 pid_t dwmblockspid = 0;
@@ -553,12 +558,15 @@ buttonpress(XEvent *e)
 				continue;
 			x += TEXTW(tags[i]);
 		} while (ev->x >= x && ++i < LENGTH(tags));
+
+		strcpy(stextprintable, stext);
+		reduce(stextprintable);
 		if (i < LENGTH(tags)) {
 			click = ClkTagBar;
 			arg.ui = 1 << i;
 		} else if (ev->x < x + blw)
 			click = ClkLtSymbol;
-		else if (ev->x > (x = selmon->ww - TEXTW(stext) + lrpad)) {
+		else if (ev->x > (x = selmon->ww - TEXTW(stextprintable) + lrpad)) {
 			click = ClkStatusText;
 
 			char *text = rawstext;
@@ -769,7 +777,7 @@ copyvalidchars(char *text, char *rawtext)
 	int i = -1, j = 0;
 
 	while(rawtext[++i]) {
-		if ((unsigned char)rawtext[i] >= ' ') {
+		if ((unsigned char)rawtext[i] >= ' ' || (unsigned char)rawtext[i] <= NUMCOLORS) {
 			text[j++] = rawtext[i];
 		}
 	}
@@ -848,6 +856,19 @@ dirtomon(int dir)
 	return m;
 }
 
+int reduce(char* text){
+	int i = -1, j = 0;
+
+	while(text[++i]) {
+		if ((unsigned char)text[i] >= ' ') {
+			text[j++] = text[i];
+		}
+	}
+	text[j] = '\0';
+
+	return TEXTW(text);
+}
+
 void
 drawbar(Monitor *m)
 {
@@ -855,13 +876,36 @@ drawbar(Monitor *m)
 	int boxs = drw->fonts->h / 9;
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
+	char *ts = stext;
+	char *tp = stext;
+	int tx = 0;
+	char ctmp;
 	Client *c;
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeNorm]);
-		tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
-		drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
+		strcpy(stextprintable, stext);
+		tw = reduce(stextprintable) - lrpad + 2; /* 2px right padding */
+		//drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
+		while (1) {
+			//if(*ts == 'a')
+			//	drw_setscheme(drw, scheme[1]);
+			//if(*ts == 'b')
+			//	drw_setscheme(drw, scheme[0]);
+			//if(*ts == 'c')
+			//	drw_setscheme(drw, scheme[2]);
+			//if ((unsigned int)*ts < 128 || (unsigned int)*ts > 128+NUMCOLORS) { ts++; continue; }
+			if ((unsigned int)*ts > NUMCOLORS) { ts++; continue; }
+			ctmp = *ts;
+			*ts = '\0';
+			drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0);
+			tx += TEXTW(tp) - lrpad;
+			if (ctmp == '\0') { break; }
+			drw_setscheme(drw, scheme[(unsigned int)(ctmp-1)]);
+			*ts = ctmp;
+			tp = ++ts;
+		}
 	}
 
 	for (c = m->clients; c; c = c->next) {
