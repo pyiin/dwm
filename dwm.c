@@ -56,6 +56,7 @@
                                * MAX(0, MIN((y)+(h),(m)->wy+(m)->wh) - MAX((y),(m)->wy)))
 #define ISINC(X)                ((X) > 1000 && (X) < 3000)
 #define ISVISIBLE(C)            ((C->tags & C->mon->tagset[C->mon->seltags]) || C->issticky)
+#define ISFOCUSABLE(C)            (((C->tags & C->mon->tagset[C->mon->seltags]) || C->issticky) && !C->alwaysbottom)
 #define PREVSEL                 3000
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define MOUSEMASK               (BUTTONMASK|PointerMotionMask)
@@ -844,7 +845,7 @@ detachstack(Client *c)
 	*tc = c->snext;
 
 	if (c == c->mon->sel) {
-		for (t = c->mon->stack; t && !ISVISIBLE(t); t = t->snext);
+		for (t = c->mon->stack; t && !ISFOCUSABLE(t); t = t->snext);
 		c->mon->sel = t;
 	}
 }
@@ -991,8 +992,8 @@ expose(XEvent *e)
 void
 focus(Client *c)
 {
-	if (!c || !ISVISIBLE(c))
-		for (c = selmon->stack; c && !ISVISIBLE(c); c = c->snext);
+	if (!c || !ISFOCUSABLE(c))
+		for (c = selmon->stack; c && !ISFOCUSABLE(c); c = c->snext);
 	if (selmon->sel && selmon->sel != c)
 		unfocus(selmon->sel, 0);
 	if (c) {
@@ -1046,8 +1047,8 @@ focusstack(const Arg *arg)
 	if (i < 0 || !selmon->sel || selmon->sel->isfullscreen)
 		return;
 
-	for(p = NULL, c = selmon->clients; c && (i || !ISVISIBLE(c));
-	    i -= ISVISIBLE(c) ? 1 : 0, p = c, c = c->next);
+	for(p = NULL, c = selmon->clients; c && (i || !ISFOCUSABLE(c));
+	    i -= ISFOCUSABLE(c) ? 1 : 0, p = c, c = c->next);
 	focus(c ? c : p);
 	restack(selmon);
 }
@@ -1410,7 +1411,7 @@ movemouse(const Arg *arg)
 Client *
 nexttiled(Client *c)
 {
-	for (; c && (c->isfloating || !ISVISIBLE(c)); c = c->next);
+	for (; c && (c->isfloating || !ISFOCUSABLE(c)); c = c->next);
 	return c;
 }
 
@@ -1436,7 +1437,7 @@ pushstack(const Arg *arg) {
 	}
 	else {
 		for(p = NULL, c = selmon->clients; c; p = c, c = c->next)
-			if(!(i -= (ISVISIBLE(c) && c != sel)))
+			if(!(i -= (ISFOCUSABLE(c) && c != sel)))
 				break;
 		c = c ? c : p;
 		detach(sel);
@@ -1599,7 +1600,7 @@ restack(Monitor *m)
 		wc.stack_mode = Below;
 		wc.sibling = m->barwin;
 		for (c = m->stack; c; c = c->snext)
-			if (!c->isfloating && ISVISIBLE(c)) {
+			if (!c->isfloating && ISFOCUSABLE(c)) {
 				XConfigureWindow(dpy, c->win, CWSibling|CWStackMode, &wc);
 				wc.sibling = c->win;
 			}
@@ -1770,21 +1771,21 @@ stackpos(const Arg *arg) {
 		return -1;
 
 	if(arg->i == PREVSEL) {
-		for(l = selmon->stack; l && (!ISVISIBLE(l) || l == selmon->sel); l = l->snext);
+		for(l = selmon->stack; l && (!ISFOCUSABLE(l) || l == selmon->sel); l = l->snext);
 		if(!l)
 			return -1;
-		for(i = 0, c = selmon->clients; c != l; i += ISVISIBLE(c) ? 1 : 0, c = c->next);
+		for(i = 0, c = selmon->clients; c != l; i += ISFOCUSABLE(c) ? 1 : 0, c = c->next);
 		return i;
 	}
 	else if(ISINC(arg->i)) {
 		if(!selmon->sel)
 			return -1;
-		for(i = 0, c = selmon->clients; c != selmon->sel; i += ISVISIBLE(c) ? 1 : 0, c = c->next);
-		for(n = i; c; n += ISVISIBLE(c) ? 1 : 0, c = c->next);
+		for(i = 0, c = selmon->clients; c != selmon->sel; i += ISFOCUSABLE(c) ? 1 : 0, c = c->next);
+		for(n = i; c; n += ISFOCUSABLE(c) ? 1 : 0, c = c->next);
 		return MOD(i + GETINC(arg->i), n);
 	}
 	else if(arg->i < 0) {
-		for(i = 0, c = selmon->clients; c; i += ISVISIBLE(c) ? 1 : 0, c = c->next);
+		for(i = 0, c = selmon->clients; c; i += ISFOCUSABLE(c) ? 1 : 0, c = c->next);
 		return MAX(i + arg->i, 0);
 	}
 	else
