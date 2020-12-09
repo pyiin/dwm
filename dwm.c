@@ -161,6 +161,7 @@ typedef struct {
 	int noswallow;
 	int monitor;
 	int alwaysbottom;
+	int issticky;
 } Rule;
 
 /* Xresources preferences */
@@ -369,6 +370,7 @@ applyrules(Client *c)
 			c->noswallow  = r->noswallow;
 			c->tags |= r->tags;
 			c->alwaysbottom = r->alwaysbottom;
+			c->issticky = r->issticky;
 			if ((r->tags & SPTAGMASK) && r->isfloating) {
 				c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 				c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
@@ -1601,7 +1603,7 @@ restack(Monitor *m)
 			}
 	}
 	if (m->sel->alwaysbottom)
-		XRaiseWindow(dpy, m->sel->win);
+		XLowerWindow(dpy, m->sel->win);
 	XSync(dpy, False);
 	while (XCheckMaskEvent(dpy, EnterWindowMask, &ev));
 }
