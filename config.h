@@ -15,7 +15,7 @@ static int swallowfloating    = 0;        /* 1 means swallow floating windows by
 static int smartgaps          = 1;        /* 1 means no outer gap when there is only one window */
 static int showbar            = 1;        /* 0 means no bar */
 static int topbar             = 1;        /* 0 means bottom bar */
-static char *fonts[]          = {"Ubuntu Mono:size=15:antialias=true:autohint=true", "Ubuntu Mono NF:size=15:antialias=true:autohint=true", "JoyPixels:size=15:antialias=true:autohint=true"}; //,"monospace:size=15", "Font Awesome 5 Free:size=15:antialias=true:autohint=true",
+static char *fonts[]          = {"Ubuntu Mono:size=15:antialias=true:autohint=true", "Ubuntu Mono Nerd Font:size=15:antialias=true:autohint=true", "JoyPixels:size=15:antialias=true:autohint=true"}; //,"monospace:size=15", "Font Awesome 5 Free:size=15:antialias=true:autohint=true",
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -24,28 +24,28 @@ static char selbordercolor[]        = "#d24109";
 static char selbgcolor[]            = "#444444";
 
 
-static char gruvboxbf[]            = "#030802";
-static char gruvboxbe[]            = "#161612";
-static char gruvboxbd[]            = "#1f2021";
-static char gruvboxbc[]            = "#282828";
-static char gruvboxbb[]            = "#32302f";
-static char gruvboxba[]            = "#393735";
-static char gruvbox00[]            = "#282828";/* hard contrast: #1d2021 / soft contrast: #32302f */
-static char gruvbox01[]            = "#cc241d";
-static char gruvbox02[]            = "#98971a";
-static char gruvbox03[]            = "#d79921";
-static char gruvbox04[]            = "#458588";
-static char gruvbox05[]            = "#b16286";
-static char gruvbox06[]            = "#689d6a";
-static char gruvbox07[]            = "#a89984";
-static char gruvbox08[]            = "#928374";
-static char gruvbox09[]            = "#fb4934";
-static char gruvbox0a[]            = "#b8bb26";
-static char gruvbox0b[]            = "#fabd2f";
-static char gruvbox0c[]            = "#83a598";
-static char gruvbox0d[]            = "#d3869b";
-static char gruvbox0e[]            = "#8ec07c";
-static char gruvbox0f[]            = "#ebdbb2";
+//static char gruvboxbf[]            = "#030802";
+//static char gruvboxbe[]            = "#161612";
+//static char gruvboxbd[]            = "#1f2021";
+//static char gruvboxbc[]            = "#282828";
+//static char gruvboxbb[]            = "#32302f";
+//static char gruvboxba[]            = "#393735";
+//static char gruvbox00[]            = "#282828";/* hard contrast: #1d2021 / soft contrast: #32302f */
+//static char gruvbox01[]            = "#cc241d";
+//static char gruvbox02[]            = "#98971a";
+//static char gruvbox03[]            = "#d79921";
+//static char gruvbox04[]            = "#458588";
+//static char gruvbox05[]            = "#b16286";
+//static char gruvbox06[]            = "#689d6a";
+//static char gruvbox07[]            = "#a89984";
+//static char gruvbox08[]            = "#928374";
+//static char gruvbox09[]            = "#fb4934";
+//static char gruvbox0a[]            = "#b8bb26";
+//static char gruvbox0b[]            = "#fabd2f";
+//static char gruvbox0c[]            = "#83a598";
+//static char gruvbox0d[]            = "#d3869b";
+//static char gruvbox0e[]            = "#8ec07c";
+//static char gruvbox0f[]            = "#ebdbb2";
 #define NUMCOLORS         10
 //static char *colors[4][3][8] = {
 //	// border   foreground background
@@ -55,27 +55,28 @@ static char gruvbox0f[]            = "#ebdbb2";
 //	{ "#ff0000", "#ffffff", "#ff0000" },  // error (white on red)
 //	// add more here
 //};
-static char *colors[][3] = {
-       /*               fg           bg           border   */
-       //[SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
-       //[SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
-	{ gruvbox0f,  "#221b22", normbordercolor},
-	{ gruvbox0f,  "#664f66", "#775c77"},
-       [SchemeTitle]  = { selbordercolor,  selbgcolor,  selbordercolor  },
-//	{ gruvbox0f,  gruvboxba,  normbordercolor  }, // \x04
-//	{ gruvbox0f,  gruvboxbb,  normbordercolor  }, // \x05
-//	{ gruvbox0f,  gruvboxbc,  normbordercolor  }, // \x06
-//	{ gruvbox0f,  gruvboxbd,  normbordercolor  }, // \x07
-//	{ gruvbox0f,  gruvboxbe,  normbordercolor  }, // \x08
-//	{ gruvbox0f,  gruvboxbf,  normbordercolor  }, // \x09
-	{ gruvbox0f,  "#554255", normbordercolor},
-	{ gruvbox0f,  "#443544", normbordercolor},
-	{ gruvbox0f,  "#332833", normbordercolor},
-	{ gruvbox0f,  "#221b22", normbordercolor},
-	{ gruvbox0f,  "#110e11", normbordercolor},
-	{ gruvbox0f,  "#000000", normbordercolor},
-	{ gruvbox0f,  gruvboxbd,  normbordercolor  }, // \x0a
-};
+#include "colours.h"
+//char *colors[][3] = {
+//       /*               fg           bg           border   */
+////	[SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
+////	[SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+////	{ gruvbox0f,  gruvboxba,  normbordercolor  }, // \x04
+////	{ gruvbox0f,  gruvboxbb,  normbordercolor  }, // \x05
+////	{ gruvbox0f,  gruvboxbc,  normbordercolor  }, // \x06
+////	{ gruvbox0f,  gruvboxbd,  normbordercolor  }, // \x07
+////	{ gruvbox0f,  gruvboxbe,  normbordercolor  }, // \x08
+////	{ gruvbox0f,  gruvboxbf,  normbordercolor  }, // \x09
+//	{ gruvbox0f,  "#221b22", normbordercolor},
+//	{ gruvbox0f,  "#664f66", "#775c77"},
+//	[SchemeTitle]  = { selbordercolor,  selbgcolor,  selbordercolor  },
+//	{ gruvbox0f,  "#554255", normbordercolor},
+//	{ gruvbox0f,  "#443544", normbordercolor},
+//	{ gruvbox0f,  "#332833", normbordercolor},
+//	{ gruvbox0f,  "#221b22", normbordercolor},
+//	{ gruvbox0f,  "#110e11", normbordercolor},
+//	{ gruvbox0f,  "#000000", normbordercolor},
+//	{ gruvbox0f,  gruvboxbd,  normbordercolor  }, // \x0a
+//};
 
 
 typedef struct {
@@ -85,28 +86,36 @@ typedef struct {
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
 const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "Ubuntu Mono NF:size=16", "-g", "50x20", "-e", "bc", "-lq", NULL };
 const char *spcmd3[] = {TERMINAL, "-n", "translation", "-g", "120x34", "-e", "dmenutrans", NULL };
+const char *spncmp[] = {TERMINAL, "-n", "spncmp", "-g", "120x40", "-e", "ncmpcpp", NULL};
+const char *sppavu[] = {"pavucontrol", NULL};
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
 	{"spranger",    spcmd2},
+	{"spncmpcpp",    spncmp},
+	{"sppavucontrol",sppavu},
 	//{"sptrans",    spcmd3},
 };
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+//static const char *tags[] = { "", "", "", "", "", "", "", "", "" };
 
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	*/
-	/* class    instance      title       	 tags mask    isfloating   isterminal  noswallow  monitor */
-	{ "Gimp",     NULL,       NULL,       	    1 << 8,       0,           0,         0,        -1 },
-	{ TERMCLASS,   NULL,       NULL,       	    0,            0,           1,         0,        -1 },
-	{ NULL,       NULL,       "Event Tester",   0,            0,           0,         1,        -1 },
-	{ NULL,      "spterm",    NULL,       	    SPTAG(0),     1,           1,         0,        -1 },
-	{ NULL,      "spcalc",    NULL,       	    SPTAG(1),     1,           1,         0,        -1 },
-	{ NULL,      "translation",    NULL,       	    0,     1,           1,         0,        -1 },
+	/* class    instance      title       		 tags mask    isfloating   isterminal  noswallow  monitor  alwaysbottom*/
+	{ "Gimp",	NULL,       NULL,       	    1 << 8,       0,           0,         0,        -1,		0 },
+	{ TERMCLASS, 	NULL,       NULL,       	    0,            0,           1,         0,        -1,		0 },
+	{ NULL,		NULL,            "Event Tester",    0,            0,           0,         1,        -1,		0 },
+	{ NULL,		"spterm",    NULL,       	    SPTAG(0),     1,           1,         0,        -1,		0 },
+	{ NULL,		"spcalc",    NULL,       	    SPTAG(1),     1,           1,         0,        -1,		0 },
+	{ NULL,		"spncmp",	  NULL,       	    SPTAG(2),     1,           1,         0,        -1,		0 },
+	{ "Pavucontrol",NULL,		 NULL,       	    SPTAG(3),     1,           0,         0,        -1,		0 },
+	{ NULL,		"translation",    NULL,       	    0,	          1,           1,         0,        -1,		0 },
+	{ NULL,		"Kunst", 	    NULL,       	    0,	          1,           0,         0,        -1,		1 },
 	//{ NULL,      "sptrans",    NULL,       	    SPTAG(2),     1,           1,         0,        -1 },
 };
 
@@ -271,7 +280,8 @@ static Key keys[] = {
 	/* { MODKEY|ShiftMask,		XK_b,		spawn,		SHCMD("") }, */
 	{ MODKEY,			XK_n,		spawn,		SHCMD(TERMINAL " -e nvim -c VimwikiIndex") },
 	{ MODKEY|ShiftMask,		XK_n,		spawn,		SHCMD(TERMINAL " -e newsboat; pkill -RTMIN+6 dwmblocks") },
-	{ MODKEY,			XK_m,		spawn,		SHCMD(TERMINAL " -e ncmpcpp") },
+	/*{ MODKEY,			XK_m,		spawn,		SHCMD(TERMINAL " -e ncmpcpp") },*/
+	{ MODKEY,			XK_m,		togglescratch,	{.ui = 2} },
 	{ MODKEY|ShiftMask,		XK_m,		spawn,		SHCMD("pamixer -t; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY,			XK_comma,	spawn,		SHCMD("mpc prev") },
 	{ MODKEY|ShiftMask,		XK_comma,	spawn,		SHCMD("mpc seek 0%") },
@@ -292,7 +302,10 @@ static Key keys[] = {
 	{ MODKEY,			XK_F1,		spawn,		SHCMD("groff -mom /usr/local/share/dwm/larbs.mom -Tpdf | zathura -") },
 	{ MODKEY,			XK_F2,		spawn,		SHCMD("tutorialvids") },
 	{ MODKEY,			XK_F3,		spawn,		SHCMD("displayselect") },
-	{ MODKEY,			XK_F4,		spawn,		SHCMD(TERMINAL " -e pulsemixer; kill -44 $(pidof dwmblocks)") },
+	/*{ MODKEY,			XK_F4,		spawn,		SHCMD(TERMINAL " -e pulsemixer; kill -44 $(pidof dwmblocks)") },*/
+	{ MODKEY|ShiftMask,		XK_F4,		spawn,		SHCMD(TERMINAL " -e pulsemixer; kill -44 $(pidof dwmblocks)") },
+	{ MODKEY,			XK_F4,		togglescratch,	{.ui = 3} },
+	//{ MODKEY|ShiftMask,		XK_F4,		spawn,		SHCMD("pavucontrol; kill -44 $(pidof dwmblocks)") },
 	/* { MODKEY,			XK_F5,		xrdb,		{.v = NULL } }, */
 	{ MODKEY,			XK_F6,		spawn,		SHCMD("torwrap") },
 	{ MODKEY,			XK_F7,		spawn,		SHCMD("td-toggle") },
@@ -314,6 +327,8 @@ static Key keys[] = {
 	{ 0, XF86XK_AudioMute,		spawn,		SHCMD("pamixer -t; kill -44 $(pidof dwmblocks)") },
 	{ 0, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("pamixer --allow-boost -i 3; kill -44 $(pidof dwmblocks)") },
 	{ 0, XF86XK_AudioLowerVolume,	spawn,		SHCMD("pamixer --allow-boost -d 3; kill -44 $(pidof dwmblocks)") },
+	{ MODKEY, XF86XK_AudioLowerVolume,	spawn,		SHCMD("mpc volume -3") },
+	{ MODKEY, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("mpc volume +3") },
 	{ 0, XF86XK_AudioPrev,		spawn,		SHCMD("mpc prev") },
 	{ 0, XF86XK_AudioNext,		spawn,		SHCMD("mpc next") },
 	{ 0, XF86XK_AudioPause,		spawn,		SHCMD("mpc pause") },

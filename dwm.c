@@ -105,7 +105,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky;
+	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, alwaysbottom;
 	pid_t pid;
 	Client *next;
 	Client *snext;
@@ -160,6 +160,7 @@ typedef struct {
 	int isterminal;
 	int noswallow;
 	int monitor;
+	int alwaysbottom;
 } Rule;
 
 /* Xresources preferences */
@@ -367,6 +368,7 @@ applyrules(Client *c)
 			c->isfloating = r->isfloating;
 			c->noswallow  = r->noswallow;
 			c->tags |= r->tags;
+			c->alwaysbottom = r->alwaysbottom;
 			if ((r->tags & SPTAGMASK) && r->isfloating) {
 				c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 				c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
@@ -1598,6 +1600,8 @@ restack(Monitor *m)
 				wc.sibling = c->win;
 			}
 	}
+	if (m->sel->alwaysbottom)
+		XRaiseWindow(dpy, m->sel->win);
 	XSync(dpy, False);
 	while (XCheckMaskEvent(dpy, EnterWindowMask, &ev));
 }
@@ -1615,6 +1619,24 @@ run(void)
 
 void
 runAutostart(void) {
+	//if(useColors){
+	//	gen_colour(-0.4, light, dark, output);
+	//	strcpy(colors[1][2], output);
+	//	gen_colour(-0.2, light, dark, output);
+	//	strcpy(colors[1][1], output);
+	//	gen_colour(0.0, light, dark, output);
+	//	strcpy(colors[3][1], output);
+	//	gen_colour(0.2, light, dark, output);
+	//	strcpy(colors[4][1], output);
+	//	gen_colour(0.4, light, dark, output);
+	//	strcpy(colors[5][1], output);
+	//	gen_colour(0.6, light, dark, output);
+	//	strcpy(colors[6][1], output);
+	//	gen_colour(0.8, light, dark, output);
+	//	strcpy(colors[7][1], output);
+	//	gen_colour(1.0, light, dark, output);
+	//	strcpy(colors[8][1], output);
+	//}
 	system("killall -q dwmblocks; dwmblocks &");
 }
 
