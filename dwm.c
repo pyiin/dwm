@@ -105,7 +105,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, alwaysbottom;
+	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, alwaysbottom, invincible;
 	pid_t pid;
 	Client *next;
 	Client *snext;
@@ -162,6 +162,7 @@ typedef struct {
 	int monitor;
 	int alwaysbottom;
 	int issticky;
+	int invincible;
 } Rule;
 
 /* Xresources preferences */
@@ -371,6 +372,7 @@ applyrules(Client *c)
 			c->tags |= r->tags;
 			c->alwaysbottom = r->alwaysbottom;
 			c->issticky = r->issticky;
+			c->invincible = r->invincible;
 			if ((r->tags & SPTAGMASK) && r->isfloating) {
 				c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 				c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
@@ -1210,7 +1212,7 @@ keypress(XEvent *e)
 void
 killclient(const Arg *arg)
 {
-	if (!selmon->sel)
+	if (!selmon->sel || selmon->sel->invincible)
 		return;
 	if (!sendevent(selmon->sel, wmatom[WMDelete])) {
 		XGrabServer(dpy);

@@ -107,15 +107,15 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	*/
 	/* class    instance      title       		 tags mask    isfloating   isterminal  noswallow  monitor  alwaysbottom	  issticky*/
-	{ "Gimp",	NULL,       NULL,       	    1 << 8,       0,           0,         0,        -1,		0,	0 },
-	{ TERMCLASS, 	NULL,       NULL,       	    0,            0,           1,         0,        -1,		0,	0 },
-	{ NULL,		NULL,            "Event Tester",    0,            0,           0,         1,        -1,		0,	0 },
-	{ NULL,		"spterm",    NULL,       	    SPTAG(0),     1,           1,         0,        -1,		0,	0 },
-	{ NULL,		"spcalc",    NULL,       	    SPTAG(1),     1,           1,         0,        -1,		0,	0 },
-	{ NULL,		"spncmp",	  NULL,       	    SPTAG(2),     1,           1,         0,        -1,		0,	0 },
-	{ "Pavucontrol",NULL,		 NULL,       	    SPTAG(3),     1,           0,         0,        -1,		0,	0 },
-	{ NULL,		"translation",    NULL,       	    0,	          1,           1,         0,        -1,		0,	0 },
-	{ NULL,		"Kunst", 	    NULL,           0,	          1,           0,         0,        -1,		1,	1 },
+	{ "Gimp",	NULL,       NULL,       	    1 << 8,       0,           0,         0,        -1,		0,	0,	0 },
+	{ TERMCLASS, 	NULL,       NULL,       	    0,            0,           1,         0,        -1,		0,	0,	0 },
+	{ NULL,		NULL,            "Event Tester",    0,            0,           0,         1,        -1,		0,	0,	0 },
+	{ NULL,		"spterm",    NULL,       	    SPTAG(0),     1,           1,         0,        -1,		0,	0,	0 },
+	{ NULL,		"spcalc",    NULL,       	    SPTAG(1),     1,           1,         0,        -1,		0,	0,	0 },
+	{ NULL,		"spncmp",	  NULL,       	    SPTAG(2),     1,           1,         0,        -1,		0,	0,	0 },
+	{ "Pavucontrol",NULL,		 NULL,       	    SPTAG(3),     1,           0,         0,        -1,		0,	0,	0 },
+	{ NULL,		"translation",    NULL,       	    0,	          1,           1,         0,        -1,		0,	0,	0 },
+	{ NULL,		"Kunst", 	    NULL,           0,	          1,           0,         0,        -1,		1,	1,	1 },
 	//{ NULL,      "sptrans",    NULL,       	    SPTAG(2),     1,           1,         0,        -1 },
 };
 
