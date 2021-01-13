@@ -1518,12 +1518,26 @@ void
 resizeclient(Client *c, int x, int y, int w, int h)
 {
 	XWindowChanges wc;
+	unsigned int n;
+	Client *nbc;
 
 	c->oldx = c->x; c->x = wc.x = x;
 	c->oldy = c->y; c->y = wc.y = y;
 	c->oldw = c->w; c->w = wc.width = w;
 	c->oldh = c->h; c->h = wc.height = h;
 	wc.border_width = c->bw;
+
+	for (n = 0, nbc = nexttiled(selmon->clients); nbc; nbc = nexttiled(nbc->next), n++);
+
+	if (c->isfloating || selmon->lt[selmon->sellt]->arrange == NULL) {
+	} else {
+		if (selmon->lt[selmon->sellt]->arrange == monocle || n == 1) {
+			wc.width += 2*wc.border_width;
+			wc.height += 2*wc.border_width;
+			wc.border_width = 0;
+		}
+	}
+
 	XConfigureWindow(dpy, c->win, CWX|CWY|CWWidth|CWHeight|CWBorderWidth, &wc);
 	configure(c);
 	XSync(dpy, False);
@@ -1626,24 +1640,6 @@ run(void)
 
 void
 runAutostart(void) {
-	//if(useColors){
-	//	gen_colour(-0.4, light, dark, output);
-	//	strcpy(colors[1][2], output);
-	//	gen_colour(-0.2, light, dark, output);
-	//	strcpy(colors[1][1], output);
-	//	gen_colour(0.0, light, dark, output);
-	//	strcpy(colors[3][1], output);
-	//	gen_colour(0.2, light, dark, output);
-	//	strcpy(colors[4][1], output);
-	//	gen_colour(0.4, light, dark, output);
-	//	strcpy(colors[5][1], output);
-	//	gen_colour(0.6, light, dark, output);
-	//	strcpy(colors[6][1], output);
-	//	gen_colour(0.8, light, dark, output);
-	//	strcpy(colors[7][1], output);
-	//	gen_colour(1.0, light, dark, output);
-	//	strcpy(colors[8][1], output);
-	//}
 	system("killall -q dwmblocks; dwmblocks &");
 }
 
