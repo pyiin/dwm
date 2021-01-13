@@ -56,7 +56,7 @@
                                * MAX(0, MIN((y)+(h),(m)->wy+(m)->wh) - MAX((y),(m)->wy)))
 #define ISINC(X)                ((X) > 1000 && (X) < 3000)
 #define ISVISIBLE(C)            ((C->tags & C->mon->tagset[C->mon->seltags]) || C->issticky)
-#define ISFOCUSABLE(C)            (((C->tags & C->mon->tagset[C->mon->seltags]) || C->issticky) && !C->alwaysbottom && !C->neverfocus)
+#define ISFOCUSABLE(C)            (((C->tags & C->mon->tagset[C->mon->seltags]) || C->issticky) && !C->neverfocus)
 #define PREVSEL                 3000
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define MOUSEMASK               (BUTTONMASK|PointerMotionMask)
@@ -259,6 +259,7 @@ static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglebottom(const Arg *arg);
 static void togglescratch(const Arg *arg);
 static void togglesticky(const Arg *arg);
 static void togglefullscr(const Arg *arg);
@@ -374,6 +375,7 @@ applyrules(Client *c)
 			c->alwaysbottom = r->alwaysbottom;
 			c->issticky = r->issticky;
 			c->invincible = r->invincible;
+			c->neverfocus = r->invincible; // invincible = unfocusable
 			if ((r->tags & SPTAGMASK) && r->isfloating) {
 				c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 				c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
@@ -2013,6 +2015,17 @@ togglebar(const Arg *arg)
 }
 
 void
+togglebottom(const Arg *arg)
+{
+	if (!selmon->sel)
+		return;
+	if (selmon->sel->isfullscreen || !selmon->sel->isfloating) /* no support for fullscreen windows, only floating */
+		return;
+	selmon->sel->alwaysbottom = !selmon->sel->alwaysbottom;
+	arrange(selmon);
+}
+
+void
 togglefloating(const Arg *arg)
 {
 	if (!selmon->sel)
@@ -2392,10 +2405,10 @@ updatewmhints(Client *c)
 			XSetWMHints(dpy, c->win, wmh);
 		} else
 			c->isurgent = (wmh->flags & XUrgencyHint) ? 1 : 0;
-		if (wmh->flags & InputHint)
-			c->neverfocus = !wmh->input;
-		else
-			c->neverfocus = 0;
+		//if (wmh->flags & InputHint)
+		//	c->neverfocus = !wmh->input;
+		//else
+		//	c->neverfocus = 0;
 		XFree(wmh);
 	}
 }
