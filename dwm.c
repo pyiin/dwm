@@ -907,17 +907,10 @@ drawbar(Monitor *m)
 		tw = reduce(stextprintable) - lrpad + 2; /* 2px right padding */
 		//drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
 		while (1) {
-			//if(*ts == 'a')
-			//	drw_setscheme(drw, scheme[1]);
-			//if(*ts == 'b')
-			//	drw_setscheme(drw, scheme[0]);
-			//if(*ts == 'c')
-			//	drw_setscheme(drw, scheme[2]);
-			//if ((unsigned int)*ts < 128 || (unsigned int)*ts > 128+NUMCOLORS) { ts++; continue; }
 			if ((unsigned int)*ts > NUMCOLORS) { ts++; continue; }
 			ctmp = *ts;
 			*ts = '\0';
-			drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0);
+			drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
 			tx += TEXTW(tp) - lrpad;
 			if (ctmp == '\0') { break; }
 			drw_setscheme(drw, scheme[(unsigned int)(ctmp-1)]);
@@ -939,17 +932,17 @@ drawbar(Monitor *m)
 
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
+		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], (m->tagset[m->seltags] & 1 << i) != 0, urg & 1 << i);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, scheme[SchemeNorm]);
-	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
+	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0, 0);
 
 	if ((w = m->ww - tw - x) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
+			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0, 0);
 			if (m->sel->isfloating)
 				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
 		} else {
