@@ -8,7 +8,7 @@ static char* colors[][3] = {
 //        { "#ebdbb2",  "#003434", normbordercolor},
 //        { "#ebdbb2",  "#002727", normbordercolor},
 //        { "#ebdbb2",  "#001a1a", normbordercolor},
-	{"#ffffff",  "#000000", "#444444"},
+	{"#ffffff",  "#000000", "#004e4e"},
 	{"#ffffff",  "#000000", "#ff4b38"},
 	{"#ffffff",  "#000000", "#ff4b38"},
 	{"#ffffff",  "#000000", "#ff4b38"},

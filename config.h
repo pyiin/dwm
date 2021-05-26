@@ -12,12 +12,12 @@ static unsigned int gappih    = 20;       /* horiz inner gap between windows */
 static unsigned int gappiv    = 10;       /* vert inner gap between windows */
 static unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
 static unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
-static int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
+static int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
 static int smartgaps          = 1;        /* 1 means no outer gap when there is only one window */
 static int showbar            = 1;        /* 0 means no bar */
 static int topbar             = 1;        /* 0 means bottom bar */
-static char *fonts[]          = {"Ubuntu Mono:size=15:antialias=true:autohint=true", "Ubuntu Mono Nerd Font:size=15:antialias=true:autohint=true", "JoyPixels:size=15:antialias=true:autohint=true"}; //,"monospace:size=15", "Font Awesome 5 Free:size=15:antialias=true:autohint=true",
-static const unsigned int baralpha = 0x60;
+static char *fonts[]          = {"Arch:size=15:antialias=true:autohint=true", "Ubuntu Mono Nerd Font:size=15:antialias=true:autohint=true", "JoyPixels:size=15:antialias=true:autohint=true"}; //,"monospace:size=15", "Font Awesome 5 Free:size=15:antialias=true:autohint=true",
+static const unsigned int baralpha = 0x9e;// 0x60;
 static const unsigned int borderalpha = OPAQUE;
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -98,7 +98,7 @@ typedef struct {
 	const void *cmd;
 } Sp;
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
-const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "Ubuntu Mono NF:size=16", "-g", "50x20", "-e", "bc", "-lq", NULL };
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "Ubuntu Mono Nerd Font:size=16", "-g", "50x20", "-e", "bc", "-lq", NULL };
 const char *spcmd3[] = {TERMINAL, "-n", "translation", "-g", "120x34", "-e", "dmenutrans", NULL };
 const char *spncmp[] = {TERMINAL, "-n", "spncmp", "-g", "120x40", "-e", "ncmpcpp", NULL};
 const char *sppavu[] = {"pavucontrol", NULL};
@@ -216,7 +216,7 @@ static Key keys[] = {
 	STACKKEYS(MODKEY,                          focus)
 	STACKKEYS(MODKEY|ShiftMask,                push)
 	/* { MODKEY|ShiftMask,		XK_Escape,	spawn,	SHCMD("") }, */
-	{ MODKEY,			XK_grave,	spawn,	SHCMD("st -c st -n translation -g 120x34 -e dmenutrans" ) },
+	{ MODKEY,			XK_grave,	spawn,	SHCMD("passmenu") },
 	{ MODKEY|ShiftMask,		XK_grave,	spawn,	SHCMD("st -c st -n translation -g 120x34 -e dict" ) },
 	//{ MODKEY,			XK_grave,	togglescratch, {.ui=2} },
 	/* { MODKEY|ShiftMask,		XK_grave,	togglescratch,	SHCMD("") }, */
@@ -345,10 +345,14 @@ static Key keys[] = {
 	{ MODKEY,			XK_Scroll_Lock,	spawn,		SHCMD("killall screenkey || screenkey &") },
 
 	{ 0, XF86XK_AudioMute,		spawn,		SHCMD("pamixer -t; kill -44 $(pidof dwmblocks)") },
-	{ 0, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("pamixer --allow-boost -i 3; kill -44 $(pidof dwmblocks)") },
-	{ 0, XF86XK_AudioLowerVolume,	spawn,		SHCMD("pamixer --allow-boost -d 3; kill -44 $(pidof dwmblocks)") },
-	{ MODKEY, XF86XK_AudioLowerVolume,	spawn,		SHCMD("mpc volume -3") },
-	{ MODKEY, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("mpc volume +3") },
+	//{ 0, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("pamixer --allow-boost -i 3; kill -44 $(pidof dwmblocks)") },
+	//{ 0, XF86XK_AudioLowerVolume,	spawn,		SHCMD("pamixer --allow-boost -d 3; kill -44 $(pidof dwmblocks)") },
+	//{ MODKEY, XF86XK_AudioLowerVolume,	spawn,		SHCMD("mpc volume -3") },
+	//{ MODKEY, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("mpc volume +3") },
+	{ 0, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("volume-change 3") },
+	{ 0, XF86XK_AudioLowerVolume,	spawn,		SHCMD("volume-change -3") },
+	{ MODKEY, XF86XK_AudioLowerVolume,	spawn,		SHCMD("volume-music -3") },
+	{ MODKEY, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("volume-music 3") },
 	{ 0, XF86XK_AudioPrev,		spawn,		SHCMD("mpc prev") },
 	{ 0, XF86XK_AudioNext,		spawn,		SHCMD("mpc next") },
 	{ 0, XF86XK_AudioPause,		spawn,		SHCMD("mpc pause") },
@@ -372,8 +376,8 @@ static Key keys[] = {
 	{ 0, XF86XK_TouchpadToggle,	spawn,		SHCMD("(synclient | grep 'TouchpadOff.*1' && synclient TouchpadOff=0) || synclient TouchpadOff=1") },
 	{ 0, XF86XK_TouchpadOff,	spawn,		SHCMD("synclient TouchpadOff=1") },
 	{ 0, XF86XK_TouchpadOn,		spawn,		SHCMD("synclient TouchpadOff=0") },
-	{ 0, XF86XK_MonBrightnessUp,	spawn,		SHCMD("xbacklight -inc 15") },
-	{ 0, XF86XK_MonBrightnessDown,	spawn,		SHCMD("xbacklight -dec 15") },
+	{ 0, XF86XK_MonBrightnessUp,	spawn,		SHCMD("brightness-change 10") },
+	{ 0, XF86XK_MonBrightnessDown,	spawn,		SHCMD("brightness-change -10") },
 
 	/* { MODKEY|Mod4Mask,              XK_h,      incrgaps,       {.i = +1 } }, */
 	/* { MODKEY|Mod4Mask,              XK_l,      incrgaps,       {.i = -1 } }, */

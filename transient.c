@@ -1,4 +1,4 @@
-/* cc transient.c -o transient -lX11 */
+//-lX11
 
 #include <stdlib.h>
 #include <unistd.h>
