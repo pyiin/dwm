@@ -24,6 +24,7 @@ typedef struct {
 	unsigned int depth;
 	Colormap cmap;
 	Drawable drawable;
+	Drawable percent_drw;
 	GC gc;
 	Clr *scheme;
 	Fnt *fonts;

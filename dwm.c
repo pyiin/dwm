@@ -878,8 +878,20 @@ int reduce(char* text){
 	int i = -1, j = 0;
 
 	while(text[++i]) {
-		if ((unsigned char)text[i] >= ' ') {
+		if ((unsigned char)text[i] >= ' ' && text[i] != '%' && text[i] != '|') {
 			text[j++] = text[i];
+		}
+		else if(text[i] == '|'){
+			i++;
+			while(text[i] != '|' && text[i] != '\0'){i++;}
+		}
+		else if(text[i] == '%'){
+			i++;
+			while(text[i] >= '0' && text[i] <= '9'){i++;}
+			while(text[i] != '%' && text[i] != '\0'){
+				text[j++] = text[i];
+				i++;
+			}
 		}
 	}
 	text[j] = '\0';
@@ -899,23 +911,69 @@ drawbar(Monitor *m)
 	int tx = 0;
 	char ctmp;
 	Client *c;
+	int middle_w = 0;
+	int fill_w = 0;
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeNorm]);
+		drw_rect(drw, 0,0,m->ww, bh, 1, 1);
 		strcpy(stextprintable, stext);
-		tw = reduce(stextprintable) - lrpad + 2; /* 2px right padding */
+		tw = reduce(stextprintable) - lrpad + 0; /* 0px right padding */
+		fprintf(stderr, "%s\n", stextprintable);
 		//drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
+		fprintf(stderr, "%s\n", stext);
 		while (1) {
-			if ((unsigned int)*ts > NUMCOLORS) { ts++; continue; }
-			ctmp = *ts;
-			*ts = '\0';
-			drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
-			tx += TEXTW(tp) - lrpad;
-			if (ctmp == '\0') { break; }
-			drw_setscheme(drw, scheme[(unsigned int)(ctmp-1)]);
-			*ts = ctmp;
-			tp = ++ts;
+			if ((unsigned int)*ts > NUMCOLORS && *ts!='%' && *ts!='|') { ts++; continue; }
+			if(*ts=='|'){ //middle
+				//draw previous;
+				*ts = '\0';
+				drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
+				tx += TEXTW(tp) - lrpad;
+				*ts = '|';
+				tp = ++ts;
+
+				while(*ts!='|' && *ts!='\0'){ts++;}
+				ctmp = *ts;
+				*ts = '\0';
+				middle_w = TEXTW(tp) -lrpad;
+				//tw-=middle_w;
+				drw_text(drw, (m->ww - middle_w)>>1, 0, middle_w, bh, 0, tp, 0, 0);
+				if (ctmp == '\0') { break; }
+				*ts = ctmp;
+				tp = ++ts;
+			}
+			else if(*ts=='%'){ //fill
+				*ts = '\0';
+				drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
+				tx += TEXTW(tp) - lrpad;
+				*ts = '%';
+
+				int percent=0;
+				ts++;
+				while(*ts>='0' && *ts<='9'){percent*=10, percent+=*ts-'0'; ts++;} //end string to fix
+				tp = ts;
+				while(*ts!='%' && *ts!='\0'){ts++;}
+
+				ctmp = *ts;
+				*ts = '\0';
+				fill_w = TEXTW(tp) -lrpad;
+				drw_text_percent(drw, m->ww - tw + tx, 0, fill_w, bh, 0, tp, percent);
+				tx+=fill_w;
+				if (ctmp == '\0') { break; }
+				*ts = ctmp;
+				tp = ++ts;
+			}
+			else{
+				ctmp = *ts;
+				*ts = '\0';
+				drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
+				tx += TEXTW(tp) - lrpad;
+				if (ctmp == '\0') { break; }
+				drw_setscheme(drw, scheme[(unsigned int)(ctmp-1)]);
+				*ts = ctmp;
+				tp = ++ts;
+			}
 		}
 	}
 
@@ -946,7 +1004,7 @@ drawbar(Monitor *m)
 	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0, 0);
 
-	if ((w = m->ww - tw - x) > bh) {
+	if ((w = ((m->ww - middle_w)>>1) - tw - lrpad) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
 			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0, 0);

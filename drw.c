@@ -74,6 +74,7 @@ drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h
 	drw->depth = depth;
 	drw->cmap = cmap;
 	drw->drawable = XCreatePixmap(dpy, root, w, h, depth);
+	drw->percent_drw = XCreatePixmap(dpy, root, w, h, depth);
 	drw->gc = XCreateGC(dpy, drw->drawable, 0, NULL);
 	XSetLineAttributes(dpy, drw->gc, 1, LineSolid, CapButt, JoinMiter);
 
@@ -373,6 +374,26 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 		XftDrawDestroy(d);
 
 	return x + (render ? w : 0);
+}
+
+void drw_text_percent(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lpad, const char *text, unsigned char percent){//TODO: fix opacities
+	percent = 100 - percent;
+	/* swap normal drawable and this one */
+	static Drawable tmp;
+	tmp = drw->drawable;
+	drw->drawable = drw->percent_drw;
+	drw->percent_drw = tmp;
+	/*draw white on black and copy to normal drawable*/
+	drw_text(drw, 0, 0, w, h, lpad, text, 0, 0);
+
+	XCopyArea(drw->dpy, drw->drawable, drw->percent_drw, drw->gc,0, 0, w, h*percent/100, x, y);
+	drw_text(drw, 0, 0, w, h, lpad, text, 1, 0);
+	XCopyArea(drw->dpy, drw->drawable, drw->percent_drw, drw->gc,0, h*percent/100, w, h-h*percent/100, x, y+h*percent/100);
+
+	/*unswap*/
+	tmp = drw->drawable;
+	drw->drawable = drw->percent_drw;
+	drw->percent_drw = tmp;
 }
 
 void
