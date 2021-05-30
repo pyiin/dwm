@@ -925,14 +925,21 @@ drawbar(Monitor *m)
 			urg |= c->tags;
 	}
 	x = 0;
+	int indn;
 	for (i = 0; i < LENGTH(tags); i++) {
+		indn = 0;
 		/* do not draw vacant tags */
 		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
 		continue;
-
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], (m->tagset[m->seltags] & 1 << i) != 0, urg & 1 << i);
+		for (c = m->clients; c; c = c->next) {
+			if (c->tags & (1 << i)) {
+				drw_rect(drw, x+1, 1 + (indn * 2), selmon->sel == c ? 6 : 1, 1, 1, (m->tagset[m->seltags] & 1 << i) != 0);
+				indn++;
+			}
+		}
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
