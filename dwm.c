@@ -920,9 +920,7 @@ drawbar(Monitor *m)
 		drw_rect(drw, 0,0,m->ww, bh, 1, 1);
 		strcpy(stextprintable, stext);
 		tw = reduce(stextprintable) - lrpad + 0; /* 0px right padding */
-		fprintf(stderr, "%s\n", stextprintable);
 		//drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
-		fprintf(stderr, "%s\n", stext);
 		while (1) {
 			if ((unsigned int)*ts > NUMCOLORS && *ts!='%' && *ts!='|') { ts++; continue; }
 			if(*ts=='|'){ //middle
@@ -1004,11 +1002,23 @@ drawbar(Monitor *m)
 	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0, 0);
 
-	if ((w = ((m->ww - middle_w)>>1) - tw - lrpad) > bh) {
+	if ((w = ((m->ww - middle_w)>>1) - x - lrpad) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
 			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0, 0);
 			if (m->sel->isfloating)
+				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
+		} else {
+			drw_setscheme(drw, scheme[SchemeNorm]);
+			drw_rect(drw, x, 0, w, bh, 1, 1);
+		}
+	}
+	x = ((m->ww + middle_w)>>1) + lrpad;
+	if ((w = ((m->ww - middle_w)>>1) - tw - lrpad) > bh) {
+		if (m->sel) {
+			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
+			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->next->name, 0, 0);
+			if (m->sel->isfloating) // TODO: similar as with tags
 				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
 		} else {
 			drw_setscheme(drw, scheme[SchemeNorm]);
