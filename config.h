@@ -16,8 +16,8 @@ static int swallowfloating    = 1;        /* 1 means swallow floating windows by
 static int smartgaps          = 1;        /* 1 means no outer gap when there is only one window */
 static int showbar            = 1;        /* 0 means no bar */
 static int topbar             = 1;        /* 0 means bottom bar */
-static char *fonts[]          = {"SF pro:size=15:antialias=true:autohint=true", "Ubuntu Mono Nerd Font:size=15:antialias=true:autohint=true", "JoyPixels:size=15:antialias=true:autohint=true"}; //,"monospace:size=15", "Font Awesome 5 Free:size=15:antialias=true:autohint=true",
-static const unsigned int baralpha = 0x9e;// 0x60;
+static char *fonts[]          = {"SF pro:size=15:antialias=true:autohint=true", "Ubuntu Mono Nerd Font:size=17:antialias=true:autohint=true", "JoyPixels:size=15:antialias=true:autohint=true"}; //,"monospace:size=15", "Font Awesome 5 Free:size=15:antialias=true:autohint=true",
+static const unsigned int baralpha = 0x60;// 0x60;
 static const unsigned int borderalpha = OPAQUE;
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -50,47 +50,29 @@ static char selbgcolor[]            = "#444444";
 //static char gruvbox0e[]            = "#8ec07c";
 //static char gruvbox0f[]            = "#ebdbb2";
 #define NUMCOLORS         10
-//static char *colors[4][3][8] = {
-//	// border   foreground background
-//	{ "#000033", "#dddddd", "#000033" },  // normal
-//	{ "#000088", "#ffffff", "#000088" },  // selected
-//	{ "#ff0000", "#000000", "#ffff00" },  // urgent/warning  (black on yellow)
-//	{ "#ff0000", "#ffffff", "#ff0000" },  // error (white on red)
-//	// add more here
-//};
-#include "colours.h"
+
+static const char* colors[][3] = {
+	{"#ffffff",  "#000000", "#333333"},
+	{"#ffffff",  "#000000", "#ff4b38"},
+	{"#aaaaaa",  "#000000", "#ff4b38"},
+	{"#ffffff",  "#000000", "#ff4b38"},
+	{"#ffffff",  "#000000", "#ff4b38"},
+	{"#ffffff",  "#000000", "#ff4b38"},
+	{"#ffffff",  "#000000", "#ff4b38"},
+	{"#ffffff",  "#000000", "#ff4b38"},
+};
+
 static const unsigned int alphas[][3]      = {
 	/*               fg      bg        border     */
 	{ OPAQUE, baralpha, borderalpha },
 	{ OPAQUE, baralpha, borderalpha },
-	{ OPAQUE, baralpha, borderalpha },
+	{ 0x60,   baralpha, borderalpha },
 	{ OPAQUE, baralpha, borderalpha },
 	{ OPAQUE, baralpha, borderalpha },
 	{ OPAQUE, baralpha, borderalpha },
 	{ OPAQUE, baralpha, borderalpha },
 	{ OPAQUE, baralpha, borderalpha },
 };
-//char *colors[][3] = {
-//       /*               fg           bg           border   */
-////	[SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
-////	[SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
-////	{ gruvbox0f,  gruvboxba,  normbordercolor  }, // \x04
-////	{ gruvbox0f,  gruvboxbb,  normbordercolor  }, // \x05
-////	{ gruvbox0f,  gruvboxbc,  normbordercolor  }, // \x06
-////	{ gruvbox0f,  gruvboxbd,  normbordercolor  }, // \x07
-////	{ gruvbox0f,  gruvboxbe,  normbordercolor  }, // \x08
-////	{ gruvbox0f,  gruvboxbf,  normbordercolor  }, // \x09
-//	{ gruvbox0f,  "#221b22", normbordercolor},
-//	{ gruvbox0f,  "#664f66", "#775c77"},
-//	[SchemeTitle]  = { selbordercolor,  selbgcolor,  selbordercolor  },
-//	{ gruvbox0f,  "#554255", normbordercolor},
-//	{ gruvbox0f,  "#443544", normbordercolor},
-//	{ gruvbox0f,  "#332833", normbordercolor},
-//	{ gruvbox0f,  "#221b22", normbordercolor},
-//	{ gruvbox0f,  "#110e11", normbordercolor},
-//	{ gruvbox0f,  "#000000", normbordercolor},
-//	{ gruvbox0f,  gruvboxbd,  normbordercolor  }, // \x0a
-//};
 
 
 typedef struct {
