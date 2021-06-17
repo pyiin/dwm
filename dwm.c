@@ -549,7 +549,7 @@ unswallow(Client *c)
 }
 
 void
-buttonpress(XEvent *e)
+buttonpress(XEvent *e) //TODO: change for bar changes
 {
 	unsigned int i, x, click, occ = 0;
 	Arg arg = {0};
@@ -902,7 +902,7 @@ int reduce(char* text){
 void
 drawbar(Monitor *m)
 {
-	int x, w, tw = 0;
+	static int x, w, tw = 0;
 	int boxs = drw->fonts->h / 9;
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
@@ -915,94 +915,100 @@ drawbar(Monitor *m)
 	int fill_w = 0;
 
 	/* draw status first so it can be overdrawn by tags later */
+	//if (m == selmon) { /* status is only drawn on selected monitor */
+	drw_setscheme(drw, scheme[SchemeNorm]);
+	drw_rect(drw, 0,0,m->ww, bh, 1, 1);
+	strcpy(stextprintable, stext);
+	tw = reduce(stextprintable) - lrpad + 0; /* 0px right padding */
+	//drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
+	while (1) {
+		if ((unsigned int)*ts > NUMCOLORS && *ts!='%' && *ts!='|') { ts++; continue; }
+		if(*ts=='|'){ //middle
+			//draw previous;
+			*ts = '\0';
+			drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
+			tx += TEXTW(tp) - lrpad;
+			*ts = '|';
+			tp = ++ts;
+
+			while(*ts!='|' && *ts!='\0'){ts++;}
+			ctmp = *ts;
+			*ts = '\0';
+			middle_w = TEXTW(tp) -lrpad;
+			//tw-=middle_w;
+			drw_text(drw, (m->ww - middle_w)>>1, 0, middle_w, bh, 0, tp, 0, 0);
+			if (ctmp == '\0') { break; }
+			*ts = ctmp;
+			tp = ++ts;
+		}
+		else if(*ts=='%'){ //fill
+			*ts = '\0';
+			drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
+			tx += TEXTW(tp) - lrpad;
+			*ts = '%';
+
+			int percent=0;
+			ts++;
+			while(*ts>='0' && *ts<='9'){percent*=10, percent+=*ts-'0'; ts++;} //end string to fix
+			tp = ts;
+			while(*ts!='%' && *ts!='\0'){ts++;}
+
+			ctmp = *ts;
+			*ts = '\0';
+			fill_w = TEXTW(tp) -lrpad;
+			drw_text_percent(drw, m->ww - tw + tx, 0, fill_w, bh, 0, tp, percent);
+			tx+=fill_w;
+			if (ctmp == '\0') { break; }
+			*ts = ctmp;
+			tp = ++ts;
+		}
+		else{
+			ctmp = *ts;
+			*ts = '\0';
+			drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
+			tx += TEXTW(tp) - lrpad;
+			if (ctmp == '\0') { break; }
+			drw_setscheme(drw, scheme[(unsigned int)(ctmp-1)]);
+			*ts = ctmp;
+			tp = ++ts;
+		}
+	}
+	//}
+
 	if (m == selmon) { /* status is only drawn on selected monitor */
-		drw_setscheme(drw, scheme[SchemeNorm]);
-		drw_rect(drw, 0,0,m->ww, bh, 1, 1);
-		strcpy(stextprintable, stext);
-		tw = reduce(stextprintable) - lrpad + 0; /* 0px right padding */
-		//drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
-		while (1) {
-			if ((unsigned int)*ts > NUMCOLORS && *ts!='%' && *ts!='|') { ts++; continue; }
-			if(*ts=='|'){ //middle
-				//draw previous;
-				*ts = '\0';
-				drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
-				tx += TEXTW(tp) - lrpad;
-				*ts = '|';
-				tp = ++ts;
-
-				while(*ts!='|' && *ts!='\0'){ts++;}
-				ctmp = *ts;
-				*ts = '\0';
-				middle_w = TEXTW(tp) -lrpad;
-				//tw-=middle_w;
-				drw_text(drw, (m->ww - middle_w)>>1, 0, middle_w, bh, 0, tp, 0, 0);
-				if (ctmp == '\0') { break; }
-				*ts = ctmp;
-				tp = ++ts;
-			}
-			else if(*ts=='%'){ //fill
-				*ts = '\0';
-				drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
-				tx += TEXTW(tp) - lrpad;
-				*ts = '%';
-
-				int percent=0;
-				ts++;
-				while(*ts>='0' && *ts<='9'){percent*=10, percent+=*ts-'0'; ts++;} //end string to fix
-				tp = ts;
-				while(*ts!='%' && *ts!='\0'){ts++;}
-
-				ctmp = *ts;
-				*ts = '\0';
-				fill_w = TEXTW(tp) -lrpad;
-				drw_text_percent(drw, m->ww - tw + tx, 0, fill_w, bh, 0, tp, percent);
-				tx+=fill_w;
-				if (ctmp == '\0') { break; }
-				*ts = ctmp;
-				tp = ++ts;
-			}
-			else{
-				ctmp = *ts;
-				*ts = '\0';
-				drw_text(drw, m->ww - tw + tx, 0, tw - tx, bh, 0, tp, 0, 0);
-				tx += TEXTW(tp) - lrpad;
-				if (ctmp == '\0') { break; }
-				drw_setscheme(drw, scheme[(unsigned int)(ctmp-1)]);
-				*ts = ctmp;
-				tp = ++ts;
-			}
-		}
-	}
-
-	for (c = m->clients; c; c = c->next) {
-		occ |= c->tags == 255 ? 0 : c->tags;
-		if (c->isurgent)
-			urg |= c->tags;
-	}
-	x = 0;
-	int indn;
-	for (i = 0; i < LENGTH(tags); i++) {
-		indn = 0;
-		/* do not draw vacant tags */
-		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
-		continue;
-		w = TEXTW(tags[i]);
-		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], (m->tagset[m->seltags] & 1 << i) != 0, urg & 1 << i);
 		for (c = m->clients; c; c = c->next) {
-			if (c->tags & (1 << i)) {
-				drw_rect(drw, x+1, 1 + (indn * 4), selmon->sel == c ? 6 : 2, 2, 1, (m->tagset[m->seltags] & 1 << i) != 0);
-				indn++;
-			}
+			occ |= c->tags == 255 ? 0 : c->tags;
+			if (c->isurgent)
+				urg |= c->tags;
 		}
-		x += w;
+		x = 0;
+		int indn;
+		for (i = 0; i < LENGTH(tags); i++) {
+			indn = 0;
+			/* do not draw vacant tags */
+			if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
+			continue;
+			w = TEXTW(tags[i]);
+			drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
+			drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], (m->tagset[m->seltags] & 1 << i) != 0, urg & 1 << i);
+			for (c = m->clients; c; c = c->next) {
+				if (c->tags & (1 << i)) {
+					drw_rect(drw, x+1, 1 + (indn * 4), selmon->sel == c ? 6 : 2, 2, 1, (m->tagset[m->seltags] & 1 << i) != 0);
+					indn++;
+				}
+			}
+			x += w;
+		}
+	}
+	else{
+		x = 0;
 	}
 
 	// stack_type
 	w = blw = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0, 0);
+	//
 	//normal window
 	if ((w = ((m->ww - middle_w)>>1) - x - lrpad) > bh) {
 		if (m->sel) {
@@ -1016,11 +1022,12 @@ drawbar(Monitor *m)
 		}
 	}
 	//next window
+	/*
 	x = ((m->ww + middle_w)>>1) + lrpad;
 	if ((w = ((m->ww - middle_w)>>1) - tw - lrpad) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[SchemeTitle]);
-			/*{
+			{
 				Client *c;
 				c = selmon->sel;
 				while((c = c->next)->tags & selmon->seltags == 0);
@@ -1028,12 +1035,13 @@ drawbar(Monitor *m)
 				drw_text(drw, x, 0, w, bh, lrpad / 2, c->name, 0, 0);
 				if (m->sel->isfloating) // TODO: similar as with tags
 					drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
-			}*/
+			}
 		} else {
 			drw_setscheme(drw, scheme[SchemeTitle]);
 			drw_rect(drw, x, 0, w, bh, 1, 1);
 		}
 	}
+	*/
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
 
